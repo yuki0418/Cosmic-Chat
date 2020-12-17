@@ -10,7 +10,7 @@ class GameRoutes {
 
   getGame = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.status(200).json({
-      message: 'Hello Game'
+      message: 'Hello Game!!'
     });
   }
 }

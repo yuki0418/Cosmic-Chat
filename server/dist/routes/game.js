@@ -58,9 +58,4 @@ var GameRoutes = /** @class */ (function () {
     return GameRoutes;
 }());
 exports.default = GameRoutes;
-// const express = require('express');
-// const router = express.Router();
-// const gameController = require('../controllers/game');
-// router.get('/', gameController.getGame);
-// module.exports = router;
 //# sourceMappingURL=game.js.map
