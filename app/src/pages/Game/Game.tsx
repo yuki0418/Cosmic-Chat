@@ -1,50 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
 import './Game.scss';
-import io from 'socket.io-client';
+import Me from './Models/Me';
+import PVector from './Models/PVector';
 
 function Game() {
-  const [data, setData] = useState(null);
-  const [count, setCount] = useState(0);
+  const size = {width: 500, height: 500}
+  const ref = useRef<any | null>(null);
 
   useEffect(() => {
-    const fetchDate = async () => {
-      const result = await axios('http://localhost:8080/game');
-      
-      setData(result.data.message);
-    };
+    let me: Me;
+    let ctx: CanvasRenderingContext2D;
 
-    let socket = io('http://localhost:8080');
+    const init = () => {
+      let canvas: HTMLCanvasElement = ref.current;
+      // Set canvas size
+      canvas.height = size.height;
+      canvas.width = size.width;
+      ctx = canvas.getContext('2d');
 
-    fetchDate();
-
-    const connect = async() => {
-
-      socket.on('connect', () => {
-        socket.send('Heelo From Client');
-
-        socket.emit('salutations', 'Hello!', {'mr': 'John'}, Uint8Array.from([1,2,3,4]));
-      });
-
-      socket.on('hello', (num) => {
-        setCount(num);
-      });
-    };
-
-    connect();
-
-    return () => {
-      socket.on('disconnect', () => {
-        console.log(socket.id);
-      });
+      me = new Me(ctx, new PVector(size.width/2, size.height/2));
+      me.initEventListeners(window);
     }
-  }, []);
+    init();
+
+    const clear = () => {
+      if(!ctx) return;
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, size.width, size.height);
+    }
+  
+    const draw = () => {
+      clear();
+
+      me.update();
+      me.draw();
+  
+      window.requestAnimationFrame(draw);
+    };
+    window.requestAnimationFrame(draw);
+
+    console.log('hey');
+  });
 
   return (
     <div className="Game">
-      Game
-      <p>{data}</p>
-      <p>{count}</p>
+      <canvas id="canvas" ref={ref}></canvas>
     </div>
   )
 }
