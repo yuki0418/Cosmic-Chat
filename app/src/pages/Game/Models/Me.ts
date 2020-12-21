@@ -1,14 +1,22 @@
 /* eslint-disable @typescript-eslint/no-useless-constructor */
+import io, { Socket } from "socket.io-client";
 import Player from "./Player";
 import PVector from "./PVector";
 
 export default class Me extends Player {
   private keys: Array<number> = [];
   private mass: number;
+  private socket: typeof Socket;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _location: PVector) {
+  // socket: typeof Socket = io('http://localhost:8080');
+
+  constructor(_ctx: CanvasRenderingContext2D | null, _location: PVector, _socket) {
     super(_ctx, _location);
     this.mass = 10;
+    this.socket = _socket;
+
+    // Setup socket
+    this.initSocket();
   }
 
   initEventListeners(target: Window | HTMLElement) {
@@ -66,5 +74,28 @@ export default class Me extends Player {
 
   private keyupHanndler(event) {
     delete this.keys[event.key];
+  }
+
+  // Socket
+  initSocket() {
+    let interval;
+    this.socket.on('connect', () => {
+      interval = setInterval(this.sendStatus.bind(this), 500);
+    });
+
+    this.socket.on('disconnect', () => {
+      clearInterval(interval);
+    });
+  }
+
+  sendStatus() {
+    let status = {
+      id: this.socket.id,
+      location: {
+        x: this.location.x, y: this.location.y
+      }
+    }
+
+    this.socket.emit('update', status);
   }
 }
