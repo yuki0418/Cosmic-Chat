@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Game.scss';
 import Me from './Models/Me';
-import Player from './Models/Player';
 import PVector from './Models/PVector';
 import io, { Socket } from "socket.io-client";
+import Players from './Models/Players';
 
 function Game() {
   const size = {width: 500, height: 500}
   const ref = useRef<any | null>(null);
-  let players: Array<any> = [];
+  let players: Players;
 
   useEffect(() => {
     let me: Me;
@@ -16,9 +16,15 @@ function Game() {
     let socket: typeof Socket = io('http://localhost:8080');
 
     const initSocket = () => {
-      socket.on('update', (newPlayers) => {
-        players = newPlayers;
-        console.log(players);
+      let interval;
+
+      socket.on('connect', () => {
+        me.id = socket.id;
+        interval = setInterval(me.sendStatus, 500);
+      });
+
+      socket.on('disconnect', () => {
+        clearInterval(interval);
       });
     }
     initSocket();
@@ -29,9 +35,15 @@ function Game() {
       canvas.height = size.height;
       canvas.width = size.width;
       ctx = canvas.getContext('2d');
-
+      
       me = new Me(ctx, new PVector(size.width/2, size.height/2), socket);
       me.initEventListeners(window);
+
+      // Players
+      players = new Players(ctx, me);
+      socket.on('update', (newPlayers) => {
+        players.update(newPlayers);
+      });
     }
     init();
 
@@ -47,12 +59,7 @@ function Game() {
       me.update();
       me.draw();
 
-      players.forEach(player => {
-        if(player.id !== socket.id) {
-          let newPlayer = new Player(ctx, new PVector(player.location.x, player.location.y));
-          newPlayer.draw();
-        }
-      });
+      players.drawPlayers();
   
       window.requestAnimationFrame(draw);
     };

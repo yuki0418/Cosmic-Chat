@@ -1,30 +1,43 @@
+/* eslint-disable @typescript-eslint/no-useless-constructor */
+import PlayerInterface from "../Interfaces/Player.interface";
+import Character from "./Character";
 import PVector from "./PVector";
 
-export default class Player {
-  ctx: CanvasRenderingContext2D | null;
-  location: PVector;
-  velocity: PVector;
-  acceleration: PVector;
+export default class Player extends Character {
+  target: PVector;
+  maxSpeed: number;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _location: PVector) {
-    this.ctx = _ctx;
-    this.location = _location;
-    this.velocity = new PVector(0, 0);
-    this.acceleration = new PVector(0, 0);
+  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _location: PVector) {
+    super(_ctx, _id, _location);
+    this.target = new PVector(_location.x, _location.y);
+    this.maxSpeed = 5;
   }
 
   update() {
-    // this.velocity.add(this.acceleration);
+    this.arrive();
+    this.velocity.add(this.acceleration);
     this.location.add(this.velocity);
     this.acceleration.mult(0);
   }
 
-  draw() {
-    if(!this.ctx) return;
-    this.ctx.fillStyle = 'white';
-    this.ctx.beginPath();
-    this.ctx.arc(this.location.x, this.location.y, 10, 0, Math.PI*2, false);
-    this.ctx.closePath();
-    this.ctx.fill();
+  updateStatus(newStatus: PlayerInterface) {
+    this.target = new PVector(newStatus.location.x, newStatus.location.y);
+  }
+
+  arrive() {
+    let desired = PVector.sub(this.target, this.location);
+    let d = desired.mag();
+    desired.normalize();
+
+    if(d < 100) {
+      let m = PVector.map_range(d, 0, 100, 0, this.maxSpeed);
+      desired.mult(m);
+    } else {
+      desired.mult(this.maxSpeed);
+    };
+
+    let steer = PVector.sub(desired, this.velocity);
+    steer.limit(0.1);
+    this.applyForce(steer);
   }
 }
