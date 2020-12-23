@@ -2,6 +2,7 @@
 import io, { Socket } from "socket.io-client";
 import PVector from "./PVector";
 import Character from './Character';
+import PlayerInterface from "../Interfaces/Player.interface";
 
 export default class Me extends Character {
   private keys: Array<number> = [];
@@ -71,13 +72,21 @@ export default class Me extends Character {
     delete this.keys[event.key];
   }
 
-  sendStatus = () => {
-    let status = {
+  getStatus = () => {
+    let status: PlayerInterface = {
       id: this.id,
       location: {
         x: this.location.x, y: this.location.y
       }
     }
-    this.socket.emit('update', status);
+    return status;
+  }
+
+  sendStatus = () => {
+    this.socket.emit('player-update', this.getStatus());
+  }
+
+  sendMessage = (msg) => {
+    this.socket.emit('player-send-message', msg);
   }
 }

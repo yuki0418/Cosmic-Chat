@@ -39,4 +39,14 @@ export default class Players {
       }
     });
   }
+
+  removePlayer(id: string) {
+    this.players = this.players.filter(player => player.id !== id);
+  }
+
+  showMessage(id: string, msg: string) {
+    if(this.players[id]) {
+      this.players[id]?.setMessage(msg);
+    }
+  }
 }

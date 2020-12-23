@@ -4,27 +4,42 @@ import Me from './Models/Me';
 import PVector from './Models/PVector';
 import io, { Socket } from "socket.io-client";
 import Players from './Models/Players';
+import PlayerInterface from './Interfaces/Player.interface';
 
 function Game() {
   const size = {width: 500, height: 500}
-  const ref = useRef<any | null>(null);
   let players: Players;
+  let me: Me;
+  const ref = useRef<any | null>(null);
+  const inputRef = useRef<any | null>(null);
+  const [btnClickHandler, setBtnClickHandler] = useState(null);
 
   useEffect(() => {
-    let me: Me;
     let ctx: CanvasRenderingContext2D;
     let socket: typeof Socket = io('http://localhost:8080');
+    // let me: Me;
 
     const initSocket = () => {
-      let interval;
-
       socket.on('connect', () => {
         me.id = socket.id;
-        interval = setInterval(me.sendStatus, 500);
+        socket.emit('join', me.getStatus());
       });
 
       socket.on('disconnect', () => {
-        clearInterval(interval);
+        // Disconnected motion
+      });
+
+      socket.on('game-update', (newPlayers: Array<PlayerInterface>) => {
+        players.update(newPlayers);
+        me.sendStatus();
+      });
+
+      socket.on('player-remove', (id: string) => {
+        players.removePlayer(id);
+      });
+
+      socket.on('player-send-message', ({id, msg}) => {
+        players.showMessage(id, msg);
       });
     }
     initSocket();
@@ -41,9 +56,6 @@ function Game() {
 
       // Players
       players = new Players(ctx, me);
-      socket.on('update', (newPlayers) => {
-        players.update(newPlayers);
-      });
     }
     init();
 
@@ -64,11 +76,27 @@ function Game() {
       window.requestAnimationFrame(draw);
     };
     window.requestAnimationFrame(draw);
-  });
+
+    setBtnClickHandler(() => function() {
+      const text = inputRef.current.value;
+      if(text) {
+        me.sendMessage(text);
+      }
+    });
+
+    return () => {
+      // Disconnect
+      socket.disconnect();
+    }
+  }, []);
 
   return (
     <div className="Game">
       <canvas id="canvas" ref={ref}></canvas>
+      <div>
+        <input type="text" ref={inputRef}/>
+        <button onClick={btnClickHandler}>SEND</button>
+      </div>
     </div>
   )
 }
