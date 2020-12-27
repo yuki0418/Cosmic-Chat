@@ -1,13 +1,18 @@
 import React, { useRef } from 'react';
 import './Home.scss';
+import { useHistory } from 'react-router-dom';
 
 function Home() {
   const nameRef = useRef(null);
+  const history = useHistory();
 
   const clickHandler = () => {
     if(!nameRef.current) return;
-    let name = nameRef.current.value;
-    console.log(name);
+    let name = nameRef.current.value.trim();
+    if(name) {
+      localStorage.setItem('name', name);
+      history.push('/game');
+    }
   }
 
   return (

@@ -3,6 +3,7 @@ import PVector from "./PVector";
 export default class Character {
   ctx: CanvasRenderingContext2D | null;
   id: string;
+  name: string;
   location: PVector;
   velocity: PVector;
   acceleration: PVector;
@@ -10,9 +11,10 @@ export default class Character {
   timerMessage: number;
   MESSAGE_SHOWING_TIME = 200;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _id: string,  _location: PVector) {
+  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _name: string,  _location: PVector) {
     this.ctx = _ctx;
     this.id = _id;
+    this.name = _name;
     this.location = _location;
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector(0, 0);
@@ -34,6 +36,8 @@ export default class Character {
     this.ctx.closePath();
     this.ctx.fill();
 
+    this.displayName();
+
     if(this.timerMessage > 0) {
       this.showMessage();
     };
@@ -53,9 +57,9 @@ export default class Character {
     this.ctx.font = '16px Arial';
     this.ctx.fillStyle = 'white';
     this.ctx.textAlign = 'center';
-    this.ctx.translate(0, -15);
+    this.ctx.translate(0, -35);
     this.ctx.fillText(this.message, this.location.x, this.location.y);
-    this.ctx.translate(0, 15);
+    this.ctx.translate(0, 35);
 
     if(this.timerMessage > 0) {
       this.timerMessage--;
@@ -63,5 +67,14 @@ export default class Character {
       this.timerMessage = 0;
       this.message = '';
     }
+  }
+
+  displayName() {
+    this.ctx.font = '16px Arial';
+    this.ctx.fillStyle = 'white';
+    this.ctx.textAlign = 'center';
+    this.ctx.translate(0, -15);
+    this.ctx.fillText(this.name, this.location.x, this.location.y);
+    this.ctx.translate(0, 15);
   }
 }

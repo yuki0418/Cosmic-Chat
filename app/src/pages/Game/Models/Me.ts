@@ -9,8 +9,8 @@ export default class Me extends Character {
   private mass: number;
   private socket: typeof Socket;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _location: PVector, _socket) {
-    super(_ctx, _socket.id, _location);
+  constructor(_ctx: CanvasRenderingContext2D | null, _name: string, _location: PVector, _socket) {
+    super(_ctx, _socket.id, _name, _location);
     this.mass = 10;
     this.socket = _socket;
   }
@@ -75,6 +75,7 @@ export default class Me extends Character {
   getStatus = () => {
     let status: PlayerInterface = {
       id: this.id,
+      name: this.name,
       location: {
         x: this.location.x, y: this.location.y
       }

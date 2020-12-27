@@ -5,6 +5,7 @@ import PVector from './Models/PVector';
 import io, { Socket } from "socket.io-client";
 import Players from './Models/Players';
 import PlayerInterface from './Interfaces/Player.interface';
+import { useHistory } from "react-router-dom";
 
 function Game() {
   const size = {width: 500, height: 500}
@@ -13,6 +14,7 @@ function Game() {
   const ref = useRef<any | null>(null);
   const inputRef = useRef<any | null>(null);
   const [btnClickHandler, setBtnClickHandler] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
     let ctx: CanvasRenderingContext2D;
@@ -45,13 +47,21 @@ function Game() {
     initSocket();
 
     const init = () => {
+      const name = localStorage.getItem('name');
+      // Check if name is stored in the localstorage
+      if (!name) {
+        history.push('/');
+      }
+
       let canvas: HTMLCanvasElement = ref.current;
       // Set canvas size
       canvas.height = size.height;
       canvas.width = size.width;
       ctx = canvas.getContext('2d');
       
-      me = new Me(ctx, new PVector(size.width/2, size.height/2), socket);
+      me = new Me(ctx, name, new PVector(size.width/2, size.height/2), socket);
+      console.log(me);
+      
       me.initEventListeners(window);
 
       // Players

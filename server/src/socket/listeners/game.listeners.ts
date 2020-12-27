@@ -8,7 +8,7 @@ export default class GameListeners {
 
   initListeners(): void {
     this.socket.on('join', (player: Player) => {
-      let newPlayer = new Player(player.id, player.location);
+      let newPlayer = new Player(player.id, player.name, player.location);
       this.game.players.push(newPlayer);
     });
 

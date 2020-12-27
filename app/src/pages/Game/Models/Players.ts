@@ -32,7 +32,9 @@ export default class Players {
     updatePlayers.forEach(player => {
       if(player.id === this.me.id) return;
       if(!this.players[player.id]) {
-        let newPlayer = new Player(this.ctx, player.id, new PVector(player.location.x, player.location.y));
+        let newPlayer = new Player(
+          this.ctx, player.id, player.name, new PVector(player.location.x, player.location.y)
+        );
         this.addPlayer(newPlayer);
       } else {
         this.players[player.id].updateStatus(player);
