@@ -48,7 +48,7 @@ var GameRoutes = /** @class */ (function () {
         this.getGame = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 res.status(200).json({
-                    message: 'Hello Game'
+                    message: 'Hello Game!!'
                 });
                 return [2 /*return*/];
             });

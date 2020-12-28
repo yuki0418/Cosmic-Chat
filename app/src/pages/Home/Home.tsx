@@ -21,7 +21,7 @@ function Home() {
         <h1 className="logo">COSMIC CHAT</h1>
       </div>
       <div className="form">
-        <input type="text" ref={nameRef}/>
+        <input type="text" ref={nameRef} placeholder="Your name"/>
         <button onClick={clickHandler}>JOIN</button>
       </div>
     </div>

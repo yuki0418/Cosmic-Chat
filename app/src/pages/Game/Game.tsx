@@ -8,9 +8,11 @@ import PlayerInterface from './Interfaces/Player.interface';
 import { useHistory } from "react-router-dom";
 import LocationUI from './LocationUI/LocationUI';
 
-const size = {width: 500, height: 500}
+// Default canvas size
+let size = {width: 500, height: 500}
 let players: Players;
 let me: Me;
+let canvas: HTMLCanvasElement;
 
 function Game() {
   const ref = useRef<any | null>(null);
@@ -20,8 +22,20 @@ function Game() {
 
   useEffect(() => {
     let ctx: CanvasRenderingContext2D;
-    let socket: typeof Socket = io('http://localhost:8080');
-    // let me: Me;
+    let socket: typeof Socket = io('https://www.google.com/url?q=https%3A%2F%2Fyuki-dev-274107.ts.r.appspot.com');
+    // let socket: typeof Socket = io('http://localhost:8080');
+    
+    // Set Canvas size to window size
+    const resizeWindowSize = () => {
+      size.width = window.innerWidth;
+      size.height = window.innerHeight;
+
+      if(!canvas) return;
+      canvas.width = size.width;
+      canvas.height = size.height;
+    };
+    resizeWindowSize();
+    window.addEventListener('resize', resizeWindowSize);
 
     const initSocket = () => {
       socket.on('connect', () => {
@@ -48,28 +62,26 @@ function Game() {
     }
     initSocket();
 
-    const init = () => {
+    const initCanvas = () => {
       const name = localStorage.getItem('name');
       // Check if name is stored in the localstorage
       if (!name) {
         history.push('/');
       }
 
-      let canvas: HTMLCanvasElement = ref.current;
+      canvas = ref.current;
       // Set canvas size
       canvas.height = size.height;
       canvas.width = size.width;
       ctx = canvas.getContext('2d');
       
       me = new Me(ctx, name, new PVector(size.width/2, size.height/2), socket);
-      console.log(me);
-      
       me.initEventListeners(window);
 
       // Players
       players = new Players(ctx, me);
     }
-    init();
+    initCanvas();
 
     const clear = () => {
       if(!ctx) return;
@@ -93,12 +105,15 @@ function Game() {
       const text = inputRef.current.value;
       if(text) {
         me.sendMessage(text);
+        inputRef.current.value = '';
       }
     });
 
     return () => {
       // Disconnect
       socket.disconnect();
+      // Reset window event listner
+      window.removeEventListener('resize', resizeWindowSize)
     }
   }, []);
 
@@ -108,8 +123,8 @@ function Game() {
         <canvas id="canvas" ref={ref}></canvas>
         <LocationUI me={me}/>
       </div>
-      <div>
-        <input type="text" ref={inputRef}/>
+      <div className="textbox">
+        <input type="text" ref={inputRef} maxLength={30}/>
         <button onClick={btnClickHandler}>SEND</button>
       </div>
     </div>

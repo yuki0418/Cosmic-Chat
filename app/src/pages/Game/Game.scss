@@ -1,4 +1,8 @@
 .Game {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+
   .canvas {
     position: relative;
   }
@@ -7,5 +11,32 @@
     position: absolute;
     left: 0;
     top: 0;
+    z-index: 10;
+  }
+
+  .textbox {
+    position: absolute;
+    z-index: 15;
+    right: 20px;
+    bottom: 20px;
+    width: 20rem;
+    height: 1.8rem;
+    display: flex;
+
+    input {
+      width: 100%;
+      padding-left: 0.4rem;
+      color: white;
+      border: none;
+      background-color: rgba($color: white, $alpha: 0.3);
+      outline: none;
+    }
+
+    button {
+      border: none;
+      padding: .2rem;
+      cursor: pointer;
+      outline: none;
+    }
   }
 }
