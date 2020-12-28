@@ -6,11 +6,13 @@ import io, { Socket } from "socket.io-client";
 import Players from './Models/Players';
 import PlayerInterface from './Interfaces/Player.interface';
 import { useHistory } from "react-router-dom";
+import LocationUI from './LocationUI/LocationUI';
+
+const size = {width: 500, height: 500}
+let players: Players;
+let me: Me;
 
 function Game() {
-  const size = {width: 500, height: 500}
-  let players: Players;
-  let me: Me;
   const ref = useRef<any | null>(null);
   const inputRef = useRef<any | null>(null);
   const [btnClickHandler, setBtnClickHandler] = useState(null);
@@ -102,7 +104,10 @@ function Game() {
 
   return (
     <div className="Game">
-      <canvas id="canvas" ref={ref}></canvas>
+      <div className="canvas">
+        <canvas id="canvas" ref={ref}></canvas>
+        <LocationUI me={me}/>
+      </div>
       <div>
         <input type="text" ref={inputRef}/>
         <button onClick={btnClickHandler}>SEND</button>
