@@ -22,7 +22,7 @@ function Game() {
 
   useEffect(() => {
     let ctx: CanvasRenderingContext2D;
-    let socket: typeof Socket = io('https://www.google.com/url?q=https%3A%2F%2Fyuki-dev-274107.ts.r.appspot.com');
+    let socket: typeof Socket = io('http://35.226.113.57/api/');
     // let socket: typeof Socket = io('http://localhost:8080');
     
     // Set Canvas size to window size
