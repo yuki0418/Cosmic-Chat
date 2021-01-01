@@ -3,6 +3,7 @@ import io, { Socket } from "socket.io-client";
 import PVector from "./PVector";
 import Character from './Character';
 import PlayerInterface from "../Interfaces/Player.interface";
+import { map } from "../Game";
 
 export default class Me extends Character {
   private keys: Array<number> = [];
@@ -27,6 +28,51 @@ export default class Me extends Character {
     this.velocity.add(this.acceleration);
     this.location.add(this.velocity);
     this.acceleration.mult(0);
+
+    if(this.location.x <= 0) this.location.x = 0;
+    if(this.location.x >= map.width) this.location.x = map.width;
+    if(this.location.y <= 0) this.location.y = 0;
+    if(this.location.y >= map.height) this.location.y = map.height;
+  }
+
+  draw() {
+    if(!this.ctx) return;
+    this.ctx.fillStyle = 'white';
+    this.ctx.beginPath();
+    this.ctx.arc(this.ctx.canvas.width/2, this.ctx.canvas.height/2, 10, 0, Math.PI*2, false);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    this.displayName();
+
+    if(this.timerMessage > 0) {
+      this.showMessage();
+    };
+  }
+
+  displayName() {
+    this.ctx.font = '16px Arial';
+    this.ctx.fillStyle = 'white';
+    this.ctx.textAlign = 'center';
+    this.ctx.translate(0, -15);
+    this.ctx.fillText(this.name, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
+    this.ctx.translate(0, 15);
+  }
+
+  showMessage() {
+    this.ctx.font = '16px Arial';
+    this.ctx.fillStyle = 'white';
+    this.ctx.textAlign = 'center';
+    this.ctx.translate(0, -35);
+    this.ctx.fillText(this.message, this.ctx.canvas.width/2, this.ctx.canvas.height/2);
+    this.ctx.translate(0, 35);
+
+    if(this.timerMessage > 0) {
+      this.timerMessage--;
+    } else {
+      this.timerMessage = 0;
+      this.message = '';
+    }
   }
 
   applyForce(force: PVector) {
@@ -89,5 +135,6 @@ export default class Me extends Character {
 
   sendMessage = (msg) => {
     this.socket.emit('player-send-message', msg);
+    this.setMessage(msg);
   }
 }

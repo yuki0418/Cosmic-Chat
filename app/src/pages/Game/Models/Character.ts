@@ -1,3 +1,4 @@
+import { map } from "../Game";
 import PVector from "./PVector";
 
 export default class Character {
@@ -26,6 +27,11 @@ export default class Character {
     // this.velocity.add(this.acceleration);
     this.location.add(this.velocity);
     this.acceleration.mult(0);
+    
+    if(this.location.x <= 0) this.location.x = 0;
+    if(this.location.x >= map.width) this.location.x = map.width;
+    if(this.location.y <= 0) this.location.y = 0;
+    if(this.location.y >= map.height) this.location.y = map.height;
   }
 
   draw() {

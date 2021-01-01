@@ -7,35 +7,30 @@ import Players from './Models/Players';
 import PlayerInterface from './Interfaces/Player.interface';
 import { useHistory } from "react-router-dom";
 import LocationUI from './LocationUI/LocationUI';
+import Camera from './Camera/Camera';
 
 // Default canvas size
-let size = {width: 500, height: 500}
-let players: Players;
+export const map = {width: 3000, height: 3000};
+let players: Players;;
 let me: Me;
 let canvas: HTMLCanvasElement;
 
 function Game() {
-  const ref = useRef<any | null>(null);
+  const cameraRef = useRef<any | null>(null);
   const inputRef = useRef<any | null>(null);
   const [btnClickHandler, setBtnClickHandler] = useState(null);
   const history = useHistory();
 
   useEffect(() => {
     let ctx: CanvasRenderingContext2D;
-    let socket: typeof Socket = io('http://35.226.113.57/api/');
-    // let socket: typeof Socket = io('http://localhost:8080');
     
-    // Set Canvas size to window size
-    const resizeWindowSize = () => {
-      size.width = window.innerWidth;
-      size.height = window.innerHeight;
-
-      if(!canvas) return;
-      canvas.width = size.width;
-      canvas.height = size.height;
-    };
-    resizeWindowSize();
-    window.addEventListener('resize', resizeWindowSize);
+    let API;
+    if(process.env.NODE_ENV === 'development') {
+      API = process.env.REACT_APP_API_DOMAIN_DEV;
+    } else {
+      API = process.env.REACT_APP_API_DOMAIN;
+    }
+    let socket: typeof Socket = io(API);
 
     const initSocket = () => {
       socket.on('connect', () => {
@@ -69,37 +64,16 @@ function Game() {
         history.push('/');
       }
 
-      canvas = ref.current;
-      // Set canvas size
-      canvas.height = size.height;
-      canvas.width = size.width;
+      canvas = cameraRef.current;
       ctx = canvas.getContext('2d');
       
-      me = new Me(ctx, name, new PVector(size.width/2, size.height/2), socket);
+      me = new Me(ctx, name, new PVector(map.width/2, map.height/2), socket);
       me.initEventListeners(window);
 
       // Players
       players = new Players(ctx, me);
     }
     initCanvas();
-
-    const clear = () => {
-      if(!ctx) return;
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, size.width, size.height);
-    }
-  
-    const draw = () => {
-      clear();
-
-      me.update();
-      me.draw();
-
-      players.drawPlayers();
-  
-      window.requestAnimationFrame(draw);
-    };
-    window.requestAnimationFrame(draw);
 
     setBtnClickHandler(() => function() {
       const text = inputRef.current.value;
@@ -112,15 +86,13 @@ function Game() {
     return () => {
       // Disconnect
       socket.disconnect();
-      // Reset window event listner
-      window.removeEventListener('resize', resizeWindowSize)
     }
   }, []);
 
   return (
     <div className="Game">
       <div className="canvas">
-        <canvas id="canvas" ref={ref}></canvas>
+        <Camera ref={cameraRef} map={map} me={me} players={players}/>
         <LocationUI me={me}/>
       </div>
       <div className="textbox">
