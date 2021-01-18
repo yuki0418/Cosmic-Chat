@@ -10,8 +10,8 @@ export default class Me extends Character {
   private mass: number;
   private socket: typeof Socket;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _name: string, _location: PVector, _socket) {
-    super(_ctx, _socket.id, _name, _location);
+  constructor(_ctx: CanvasRenderingContext2D | null, _name: string, _color:string, _location: PVector, _socket) {
+    super(_ctx, _socket.id, _name, _color, _location);
     this.mass = 10;
     this.socket = _socket;
   }
@@ -37,7 +37,7 @@ export default class Me extends Character {
 
   draw() {
     if(!this.ctx) return;
-    this.ctx.fillStyle = 'white';
+    this.ctx.fillStyle = this.color;
     this.ctx.beginPath();
     this.ctx.arc(this.ctx.canvas.width/2, this.ctx.canvas.height/2, 10, 0, Math.PI*2, false);
     this.ctx.closePath();
@@ -122,6 +122,7 @@ export default class Me extends Character {
     let status: PlayerInterface = {
       id: this.id,
       name: this.name,
+      color: this.color,
       location: {
         x: this.location.x, y: this.location.y
       }

@@ -7,8 +7,8 @@ export default class Player extends Character {
   target: PVector;
   maxSpeed: number;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _name: string, _location: PVector) {
-    super(_ctx, _id, _name, _location);
+  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _name: string, _color: string, _location: PVector) {
+    super(_ctx, _id, _name, _color, _location);
     this.target = new PVector(_location.x, _location.y);
     this.maxSpeed = 5;
   }

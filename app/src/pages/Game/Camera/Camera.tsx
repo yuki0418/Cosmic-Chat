@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Me from '../Models/Me';
 import Players from '../Models/Players';
 import PVector from '../Models/PVector';
+import bgImage from '../../../images/game-bg.jpg';
 import './Camera.scss';
 
 type Props = {map, me: Me, players: Players};
@@ -55,20 +56,29 @@ const Camera = React.forwardRef((props: Props, ref: any) => {
       ctx.fillRect(0, 0, props.map.width, props.map.height);
     }
 
+    const image = new Image();
+    image.src = bgImage;
+
     const draw = () => {
       clear();
 
       viewport.x = props.me.location.x - (size.width/2);
       viewport.y = props.me.location.y - (size.height/2);
 
-      props.me.update();
-      props.me.draw();
-
       ctx.translate(-viewport.x, -viewport.y);
+      
+      ctx.save();
+      ctx.scale(1.5,1.5);
+      ctx.translate(-800, -800);
+      ctx.drawImage(image, 0, 0);
+      ctx.restore();
       
       props.players.drawPlayers();
       
       ctx.translate(viewport.x, viewport.y);
+
+      props.me.update();
+      props.me.draw();
 
       window.requestAnimationFrame(draw);
     };

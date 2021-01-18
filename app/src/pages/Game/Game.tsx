@@ -10,7 +10,7 @@ import LocationUI from './LocationUI/LocationUI';
 import Camera from './Camera/Camera';
 
 // Default canvas size
-export const map = {width: 3000, height: 3000};
+export const map = {width: 2500, height: 2500};
 let players: Players;;
 let me: Me;
 let canvas: HTMLCanvasElement;
@@ -59,15 +59,16 @@ function Game() {
 
     const initCanvas = () => {
       const name = localStorage.getItem('name');
+      const color = localStorage.getItem('color');
       // Check if name is stored in the localstorage
-      if (!name) {
+      if (!name || !color) {
         history.push('/');
       }
 
       canvas = cameraRef.current;
       ctx = canvas.getContext('2d');
       
-      me = new Me(ctx, name, new PVector(map.width/2, map.height/2), socket);
+      me = new Me(ctx, name, color, new PVector(map.width/2, map.height/2), socket);
       me.initEventListeners(window);
 
       // Players

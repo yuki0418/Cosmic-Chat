@@ -18,10 +18,17 @@
     height: 3rem;
     display: flex;
 
+
     input {
       width: 18rem;
       font-size: 1.8rem;
       padding-left: 1rem;
+
+      &[type='color'] {
+        width: 2rem;
+        height: auto;
+        padding-left: unset;
+      }
     }
 
     button {

@@ -5,6 +5,7 @@ export default class Character {
   ctx: CanvasRenderingContext2D | null;
   id: string;
   name: string;
+  color: string;
   location: PVector;
   velocity: PVector;
   acceleration: PVector;
@@ -12,10 +13,11 @@ export default class Character {
   timerMessage: number;
   MESSAGE_SHOWING_TIME = 200;
 
-  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _name: string,  _location: PVector) {
+  constructor(_ctx: CanvasRenderingContext2D | null, _id: string, _name: string, _color,  _location: PVector) {
     this.ctx = _ctx;
     this.id = _id;
     this.name = _name;
+    this.color = _color;
     this.location = _location;
     this.velocity = new PVector(0, 0);
     this.acceleration = new PVector(0, 0);
@@ -36,7 +38,7 @@ export default class Character {
 
   draw() {
     if(!this.ctx) return;
-    this.ctx.fillStyle = 'white';
+    this.ctx.fillStyle = this.color;
     this.ctx.beginPath();
     this.ctx.arc(this.location.x, this.location.y, 10, 0, Math.PI*2, false);
     this.ctx.closePath();

@@ -33,7 +33,7 @@ export default class Players {
       if(player.id === this.me.id) return;
       if(!this.players[player.id]) {
         let newPlayer = new Player(
-          this.ctx, player.id, player.name, new PVector(player.location.x, player.location.y)
+          this.ctx, player.id, player.name, player.color, new PVector(player.location.x, player.location.y)
         );
         this.addPlayer(newPlayer);
       } else {
